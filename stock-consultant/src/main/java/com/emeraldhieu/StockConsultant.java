@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import com.emeraldhieu.converter.DateFormat;
+import com.emeraldhieu.validator.QueryParamValidator;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -48,6 +49,7 @@ public class StockConsultant extends Application {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{tickerSymbol}/closePrice")
+    @QueryParamValidator
     public Object getClosePrice(@NotNull @PathParam("tickerSymbol") String tickerSymbol,
                                 @NotNull @QueryParam("startDate") @DateFormat Date startDate,
                                 @NotNull @QueryParam("endDate") @DateFormat Date endDate) throws Exception {
