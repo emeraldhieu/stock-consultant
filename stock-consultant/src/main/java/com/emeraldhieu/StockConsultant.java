@@ -1,16 +1,13 @@
 package com.emeraldhieu;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
@@ -24,9 +21,9 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import com.emeraldhieu.closeprice.ClosePrice;
-import com.emeraldhieu.converter.DateFormat;
+import com.emeraldhieu.closeprice.ClosePriceValidator;
+import com.emeraldhieu.twohundreddma.DmaValidator;
 import com.emeraldhieu.twohundreddma.TwoHundredDayMovingAverage;
-import com.emeraldhieu.validator.QueryParamValidator;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -39,6 +36,7 @@ public class StockConsultant extends Application {
     private static final String QUANDL_API_ENDPOINT = "https://www.quandl.com/api/v3/datasets/WIKI/";
     private static final String GET_CLOSE_PRICE_URI_PATTERN = QUANDL_API_ENDPOINT + "%s.json?&column_index=4&start_date=%s&end_date=%s";
     private static final String GET_200_DAY_MOVING_AVERAGE_URI_PATTERN = QUANDL_API_ENDPOINT + "%s.json?column_index=4&collapse=daily&order=asc&limit=200&start_date=%s";
+    private static final String GET_FIRST_POSSIBLE_START_DATE_URI_PATTERN = QUANDL_API_ENDPOINT + "%s.json?column_index=4&collapse=daily&order=asc&limit=1";
 
     private OkHttpClient client = new OkHttpClient();
 
@@ -52,19 +50,12 @@ public class StockConsultant extends Application {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{tickerSymbol}/closePrice")
-    @QueryParamValidator
-    public Object getClosePrice(@NotNull @PathParam("tickerSymbol") String tickerSymbol,
-                                @NotNull @QueryParam("startDate") @DateFormat Date startDate,
-                                @NotNull @QueryParam("endDate") @DateFormat Date endDate) throws Exception {
+    @ClosePriceValidator
+    public Object getClosePrice(@PathParam("tickerSymbol") String tickerSymbol,
+                                @QueryParam("startDate") String startDate,
+                                @QueryParam("endDate") String endDate) throws Exception {
 
-        // TODO Consider passing startDate and endDate as Strings directly.
-        LocalDateTime start = LocalDateTime.ofInstant(startDate.toInstant(), ZoneId.systemDefault());
-        String startDateStr = DateTimeFormatter.ISO_LOCAL_DATE.format(start);
-
-        LocalDateTime end = LocalDateTime.ofInstant(endDate.toInstant(), ZoneId.systemDefault());
-        String endDateStr = DateTimeFormatter.ISO_LOCAL_DATE.format(end);
-
-        String requestUri = String.format(GET_CLOSE_PRICE_URI_PATTERN, tickerSymbol, startDateStr, endDateStr);
+        String requestUri = String.format(GET_CLOSE_PRICE_URI_PATTERN, tickerSymbol, startDate, endDate);
         Request request = new Request.Builder().url(requestUri).build();
 
         try (Response response = client.newCall(request).execute()) {
@@ -108,15 +99,13 @@ public class StockConsultant extends Application {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{tickerSymbol}/200dma")
-    @QueryParamValidator
-    public Object get200DayMovingAverage(@NotNull @PathParam("tickerSymbol") String tickerSymbol,
-                                @NotNull @QueryParam("startDate") @DateFormat Date startDate) throws Exception {
+    @DmaValidator
+    public Object get200DayMovingAverage(@PathParam("tickerSymbol") String tickerSymbol,
+                                         @QueryParam("startDate") String startDate) throws Exception {
 
-        // TODO Consider passing startDate as a String directly.
-        LocalDateTime start = LocalDateTime.ofInstant(startDate.toInstant(), ZoneId.systemDefault());
-        String startDateStr = DateTimeFormatter.ISO_LOCAL_DATE.format(start);
-
-        String requestUri = String.format(GET_200_DAY_MOVING_AVERAGE_URI_PATTERN, tickerSymbol, startDateStr);
+        String requestUri = startDate == null
+                ? String.format(GET_FIRST_POSSIBLE_START_DATE_URI_PATTERN, tickerSymbol)
+                : String.format(GET_200_DAY_MOVING_AVERAGE_URI_PATTERN, tickerSymbol, startDate);
         Request request = new Request.Builder().url(requestUri).build();
 
         try (Response response = client.newCall(request).execute()) {
@@ -129,9 +118,11 @@ public class StockConsultant extends Application {
             JSONObject dataSetObject = (JSONObject) responseObj.get("dataset");
             JSONArray dataArray = (JSONArray) dataSetObject.get("data");
 
-            // Get list of dateCloses.
-            Iterable<Object> iterable = () -> dataArray.iterator();
-            double average = StreamSupport.stream(iterable.spliterator(), false)
+            if (startDate == null) {
+                suggestStartDate(dataArray);
+            }
+
+            double average = StreamSupport.stream(Spliterators.spliteratorUnknownSize(dataArray.iterator(), Spliterator.ORDERED), false)
                     .map(JSONArray.class::cast)
                     .mapToDouble(closePrice -> closePrice.getDouble(1))
                     .average().getAsDouble();
@@ -146,5 +137,15 @@ public class StockConsultant extends Application {
 
             return twoHundredDayMovingAverage;
         }
+    }
+
+    private void suggestStartDate(JSONArray dataArray) {
+        String errorMessage = String.format("'startDate' is missing. Try again with 'startDate=%s.'",
+                StreamSupport.stream(Spliterators.spliteratorUnknownSize(dataArray.iterator(), Spliterator.ORDERED), false)
+                        .map(JSONArray.class::cast)
+                        .map(closePrice -> closePrice.getString(0))
+                        .findFirst().get()
+        );
+        throw new NotFoundException(errorMessage);
     }
 }

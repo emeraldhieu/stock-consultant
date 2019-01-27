@@ -1,4 +1,4 @@
-package com.emeraldhieu.validator;
+package com.emeraldhieu.twohundreddma;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,9 +11,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-@QueryParamValidator
+@DmaValidator
 @PreMatching
-public class ValidationFilter implements ContainerRequestFilter {
+public class DmaValidationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
@@ -25,24 +25,12 @@ public class ValidationFilter implements ContainerRequestFilter {
 
     private void validateDate(MultivaluedMap<String, String> queryParameters) {
         String startDate = queryParameters.getFirst("startDate");
-        String endDate = queryParameters.getFirst("endDate");
-        LocalDate startDateObj = null, endDateObj = null;
         if (startDate != null) {
             try {
-                startDateObj = LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE);
+                LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE);
             } catch (Exception e) {
                 throw new NotFoundException("Invalid date");
             }
-        }
-        if (endDate != null) {
-            try {
-                endDateObj = LocalDate.parse(endDate, DateTimeFormatter.ISO_LOCAL_DATE);
-            } catch (Exception e) {
-                throw new NotFoundException("Invalid date");
-            }
-        }
-        if (startDateObj != null && endDateObj != null && endDateObj.isBefore(startDateObj)) {
-            throw new NotFoundException("Invalid date range");
         }
     }
 }

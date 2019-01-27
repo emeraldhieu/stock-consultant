@@ -1,4 +1,4 @@
-package com.emeraldhieu;
+package com.emeraldhieu.contextresolver;
 
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;

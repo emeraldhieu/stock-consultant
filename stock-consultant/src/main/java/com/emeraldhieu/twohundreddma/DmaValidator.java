@@ -1,4 +1,4 @@
-package com.emeraldhieu.validator;
+package com.emeraldhieu.twohundreddma;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,6 +10,6 @@ import javax.ws.rs.NameBinding;
 @NameBinding
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-public @interface QueryParamValidator {
+public @interface DmaValidator {
     
 }
