@@ -148,4 +148,11 @@ public class StockConsultant extends Application {
         );
         throw new NotFoundException(errorMessage);
     }
+
+    /**
+     * Used for testing.
+     */
+    public void setClient(OkHttpClient client) {
+        this.client = client;
+    }
 }
