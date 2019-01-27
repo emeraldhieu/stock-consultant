@@ -34,8 +34,7 @@ import okhttp3.ResponseBody;
 @Path("api/v2")
 public class StockConsultant extends Application {
 
-    private static final String API_KEY = "AJLwG2syNbscFyVbzKjM";
-    private static final String GET_CLOSE_PRICE_URI_PATTERN = "https://www.quandl.com/api/v3/datasets/WIKI/%s/data.json?api_key=" + API_KEY + "&column_index=4&start_date=%s&end_date=%s";
+    private static final String GET_CLOSE_PRICE_URI_PATTERN = "https://www.quandl.com/api/v3/datasets/WIKI/%s.json?&column_index=4&start_date=%s&end_date=%s";
 
     private OkHttpClient client = new OkHttpClient();
 
@@ -81,7 +80,7 @@ public class StockConsultant extends Application {
                 }
             }
 
-            JSONObject dataSetObject = (JSONObject) outerObject.get("dataset_data");
+            JSONObject dataSetObject = (JSONObject) outerObject.get("dataset");
             JSONArray dataArray = (JSONArray) dataSetObject.get("data");
 
             // Get list of dateCloses.
