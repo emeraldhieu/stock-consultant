@@ -38,7 +38,7 @@ public class StockConsultant extends Application {
 
     private static final String QUANDL_API_ENDPOINT = "https://www.quandl.com/api/v3/datasets/WIKI/";
     private static final String GET_CLOSE_PRICE_URI_PATTERN = QUANDL_API_ENDPOINT + "%s.json?&column_index=4&start_date=%s&end_date=%s";
-    private static final String GET_200_DAY_MOVING_AVERAGE_URI_PATTERN = QUANDL_API_ENDPOINT + "%s.json?column_index=4&limit=200&start_date=%s";
+    private static final String GET_200_DAY_MOVING_AVERAGE_URI_PATTERN = QUANDL_API_ENDPOINT + "%s.json?column_index=4&collapse=daily&order=asc&limit=200&start_date=%s";
 
     private OkHttpClient client = new OkHttpClient();
 
@@ -56,11 +56,6 @@ public class StockConsultant extends Application {
     public Object getClosePrice(@NotNull @PathParam("tickerSymbol") String tickerSymbol,
                                 @NotNull @QueryParam("startDate") @DateFormat Date startDate,
                                 @NotNull @QueryParam("endDate") @DateFormat Date endDate) throws Exception {
-
-        // Handle invalid range of dates.
-        if (endDate.before(startDate)) {
-            throw new NotFoundException("Invalid range of dates");
-        }
 
         // TODO Consider passing startDate and endDate as Strings directly.
         LocalDateTime start = LocalDateTime.ofInstant(startDate.toInstant(), ZoneId.systemDefault());

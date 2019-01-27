@@ -1,5 +1,9 @@
 package com.emeraldhieu.validator;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
@@ -13,9 +17,32 @@ public class ValidationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
-        MultivaluedMap< String, String > queryParameters = requestContext.getUriInfo().getQueryParameters();
-        // TODO Implement validation right here instead of in resource method.
-        // https://dzone.com/articles/validating-jax-rs-query-parameters
+        MultivaluedMap<String, String> queryParameters = requestContext.getUriInfo().getQueryParameters();
+        // TODO Enrich validation.
         // https://dennis-xlc.gitbooks.io/restful-java-with-jax-rs-2-0-en/cn/part1/chapter12/server_side_filters.html
+        validateDate(queryParameters);
+    }
+
+    private void validateDate(MultivaluedMap<String, String> queryParameters) {
+        String startDate = queryParameters.getFirst("startDate");
+        String endDate = queryParameters.getFirst("endDate");
+        LocalDate startDateObj = null, endDateObj = null;
+        if (startDate != null) {
+            try {
+                startDateObj = LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE);
+            } catch (Exception e) {
+                throw new NotFoundException("Invalid date");
+            }
+        }
+        if (endDate != null) {
+            try {
+                endDateObj = LocalDate.parse(endDate, DateTimeFormatter.ISO_LOCAL_DATE);
+            } catch (Exception e) {
+                throw new NotFoundException("Invalid date");
+            }
+        }
+        if (startDateObj != null && endDateObj != null && endDateObj.isBefore(startDateObj)) {
+            throw new NotFoundException("Invalid date range");
+        }
     }
 }
