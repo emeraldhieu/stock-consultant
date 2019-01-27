@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
+import com.emeraldhieu.closeprice.ClosePrice;
 import com.emeraldhieu.converter.DateFormat;
 import com.emeraldhieu.validator.QueryParamValidator;
 

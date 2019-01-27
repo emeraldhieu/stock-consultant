@@ -1,4 +1,4 @@
-package com.emeraldhieu;
+package com.emeraldhieu.closeprice;
 
 import java.util.List;
 
