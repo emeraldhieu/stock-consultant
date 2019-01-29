@@ -45,15 +45,15 @@ public class StockConsultant extends Application {
     private static final String GET_FIRST_POSSIBLE_START_DATE_URI_PATTERN = QUANDL_API_ENDPOINT + "%s.json?column_index=4&collapse=daily&order=asc&limit=1";
 
     private static final String INVALID_TICKER_SYMBOL_ERROR_MESSAGE = "Invalid ticker symbol";
+    private static final String SUGGESTED_START_DATE_MESSAGE = "'startDate' is missing. Try again with 'startDate=%s'.";
 
     private OkHttpClient client = new OkHttpClient();
 
     @GET
     @Path("")
     public String test() {
-        return "HIEUGIOI";
+        return "Home page";
     }
-
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -122,17 +122,12 @@ public class StockConsultant extends Application {
             JSONArray dataArray = (JSONArray) dataSetObject.get("data");
 
             if (startDate == null) {
-                suggestStartDate(dataArray);
+                throw new NotFoundException(String.format(SUGGESTED_START_DATE_MESSAGE, getSuggestedStartDate(dataArray)));
             }
-
-            double average = StreamSupport.stream(Spliterators.spliteratorUnknownSize(dataArray.iterator(), Spliterator.ORDERED), false)
-                    .map(JSONArray.class::cast)
-                    .mapToDouble(closePrice -> closePrice.getDouble(1))
-                    .average().getAsDouble();
 
             TwoHundredDayMovingAverage.TwoHundredDma twoHundredDma = TwoHundredDayMovingAverage.TwoHundredDma.builder()
                     .ticker(tickerSymbol)
-                    .avg(String.valueOf(average))
+                    .avg(String.valueOf(getAverage(dataArray)))
                     .build();
 
             TwoHundredDayMovingAverage twoHundredDayMovingAverage = TwoHundredDayMovingAverage.builder()
@@ -142,14 +137,19 @@ public class StockConsultant extends Application {
         }
     }
 
-    private void suggestStartDate(JSONArray dataArray) {
-        String errorMessage = String.format("'startDate' is missing. Try again with 'startDate=%s.'",
-                StreamSupport.stream(Spliterators.spliteratorUnknownSize(dataArray.iterator(), Spliterator.ORDERED), false)
-                        .map(JSONArray.class::cast)
-                        .map(closePrice -> closePrice.getString(0))
-                        .findFirst().get()
-        );
-        throw new NotFoundException(errorMessage);
+    private double getAverage(JSONArray dataArray) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(dataArray.iterator(), Spliterator.ORDERED), false)
+                .map(JSONArray.class::cast)
+                .mapToDouble(closePrice -> closePrice.getDouble(1))
+                .average().getAsDouble();
+    }
+
+    private String getSuggestedStartDate(JSONArray dataArray) {
+        String suggestedStartDate = StreamSupport.stream(Spliterators.spliteratorUnknownSize(dataArray.iterator(), Spliterator.ORDERED), false)
+                .map(JSONArray.class::cast)
+                .map(closePrice -> closePrice.getString(0))
+                .findFirst().get();
+        return suggestedStartDate;
     }
 
     @GET
@@ -174,20 +174,19 @@ public class StockConsultant extends Application {
 
                     // Leniently skip invalid ticker.
                     if (!isTickerValid(responseObj)) {
-                        return null;
+                        MultiDma.TwoHundredDma.Dma invalidTickerDma = MultiDma.TwoHundredDma.Dma.builder()
+                                .ticker(ticker)
+                                .errorMessage(INVALID_TICKER_SYMBOL_ERROR_MESSAGE)
+                                .build();
+                        return invalidTickerDma;
                     }
 
                     JSONObject dataSetObject = (JSONObject) responseObj.get("dataset");
                     JSONArray dataArray = (JSONArray) dataSetObject.get("data");
 
-                    double average = StreamSupport.stream(Spliterators.spliteratorUnknownSize(dataArray.iterator(), Spliterator.ORDERED), false)
-                            .map(JSONArray.class::cast)
-                            .mapToDouble(closePrice -> closePrice.getDouble(1))
-                            .average().getAsDouble();
-
                     MultiDma.TwoHundredDma.Dma dma = MultiDma.TwoHundredDma.Dma.builder()
                             .ticker(ticker)
-                            .avg(String.valueOf(average))
+                            .avg(String.valueOf(getAverage(dataArray)))
                             .build();
 
                     return dma;
