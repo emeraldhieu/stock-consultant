@@ -39,12 +39,20 @@ import okhttp3.Response;
 @Path("api/v2")
 public class StockConsultant extends Application {
 
+    /**
+     * API key is taken into account to get rid of the 50-call limitation per day.
+     */
+    private static final String API_KEY = "AJLwG2syNbscFyVbzKjM";
     private static final String QUANDL_API_ENDPOINT = "https://www.quandl.com/api/v3/datasets/WIKI/";
-    private static final String GET_CLOSE_PRICE_URI_PATTERN = QUANDL_API_ENDPOINT + "%s.json?&column_index=4&start_date=%s&end_date=%s";
-    private static final String GET_200_DAY_MOVING_AVERAGE_URI_PATTERN = QUANDL_API_ENDPOINT + "%s.json?column_index=4&collapse=daily&order=asc&limit=200&start_date=%s";
-    private static final String GET_FIRST_POSSIBLE_START_DATE_URI_PATTERN = QUANDL_API_ENDPOINT + "%s.json?column_index=4&collapse=daily&order=asc&limit=1";
+    private static final String GET_CLOSE_PRICE_URI_PATTERN =
+            QUANDL_API_ENDPOINT + "%s/data.json?column_index=4&start_date=%s&end_date=%s&api_key=" + API_KEY;
+    private static final String GET_200_DAY_MOVING_AVERAGE_URI_PATTERN =
+            QUANDL_API_ENDPOINT + "%s/data.json?column_index=4&collapse=daily&order=asc&limit=200&start_date=%s&api_key=" + API_KEY;
+    private static final String GET_FIRST_POSSIBLE_START_DATE_URI_PATTERN =
+            QUANDL_API_ENDPOINT + "%s/data.json?column_index=4&collapse=daily&order=asc&limit=1&api_key=" + API_KEY;
 
     private static final String INVALID_TICKER_SYMBOL_ERROR_MESSAGE = "Invalid ticker symbol";
+    private static final String TOO_FAST_REQUEST_ERROR_MESSAGE = "Too many requests at the same time";
     private static final String SUGGESTED_START_DATE_MESSAGE = "'startDate' is missing. Try again with 'startDate=%s'.";
 
     private OkHttpClient client = new OkHttpClient();
@@ -75,7 +83,7 @@ public class StockConsultant extends Application {
                 throw new NotFoundException(INVALID_TICKER_SYMBOL_ERROR_MESSAGE);
             }
 
-            JSONObject dataSetObject = (JSONObject) responseObj.get("dataset");
+            JSONObject dataSetObject = (JSONObject) responseObj.get("dataset_data");
             JSONArray dataArray = (JSONArray) dataSetObject.get("data");
 
             // Get list of dateCloses.
@@ -118,7 +126,7 @@ public class StockConsultant extends Application {
                 throw new NotFoundException(INVALID_TICKER_SYMBOL_ERROR_MESSAGE);
             }
 
-            JSONObject dataSetObject = (JSONObject) responseObj.get("dataset");
+            JSONObject dataSetObject = (JSONObject) responseObj.get("dataset_data");
             JSONArray dataArray = (JSONArray) dataSetObject.get("data");
 
             if (startDate == null) {
@@ -181,7 +189,15 @@ public class StockConsultant extends Application {
                         return invalidTickerDma;
                     }
 
-                    JSONObject dataSetObject = (JSONObject) responseObj.get("dataset");
+                    if (!isRequestSlowEnough(responseObj)) {
+                        MultiDma.TwoHundredDma.Dma invalidTickerDma = MultiDma.TwoHundredDma.Dma.builder()
+                                .ticker(ticker)
+                                .errorMessage(TOO_FAST_REQUEST_ERROR_MESSAGE)
+                                .build();
+                        return invalidTickerDma;
+                    }
+
+                    JSONObject dataSetObject = (JSONObject) responseObj.get("dataset_data");
                     JSONArray dataArray = (JSONArray) dataSetObject.get("data");
 
                     MultiDma.TwoHundredDma.Dma dma = MultiDma.TwoHundredDma.Dma.builder()
@@ -225,10 +241,18 @@ public class StockConsultant extends Application {
     }
 
     private boolean isTickerValid(JSONObject responseObj) {
+        return isValid(responseObj, "QECx02");
+    }
+
+    private boolean isRequestSlowEnough(JSONObject responseObj) {
+        return isValid(responseObj, "QELx04");
+    }
+
+    private boolean isValid(JSONObject responseObj, String quandlErrorCode) {
         if (responseObj.has("quandl_error")) {
             JSONObject errorObject = (JSONObject) responseObj.get("quandl_error");
             String errorCode = errorObject.getString("code");
-            if (errorCode.equals("QECx02")) {
+            if (errorCode.equals(quandlErrorCode)) {
                 return false;
             }
         }
