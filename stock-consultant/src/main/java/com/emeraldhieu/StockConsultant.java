@@ -43,11 +43,15 @@ public class StockConsultant extends Application {
      * API key is taken into account to get rid of the 50-call limitation per day.
      */
     private static final String API_KEY = "AJLwG2syNbscFyVbzKjM";
+
     private static final String QUANDL_API_ENDPOINT = "https://www.quandl.com/api/v3/datasets/WIKI/";
+
     private static final String GET_CLOSE_PRICE_URI_PATTERN =
             QUANDL_API_ENDPOINT + "%s/data.json?column_index=4&start_date=%s&end_date=%s&api_key=" + API_KEY;
+
     private static final String GET_200_DAY_MOVING_AVERAGE_URI_PATTERN =
             QUANDL_API_ENDPOINT + "%s/data.json?column_index=4&collapse=daily&order=asc&limit=200&start_date=%s&api_key=" + API_KEY;
+
     private static final String GET_FIRST_POSSIBLE_START_DATE_URI_PATTERN =
             QUANDL_API_ENDPOINT + "%s/data.json?column_index=4&collapse=daily&order=asc&limit=1&api_key=" + API_KEY;
 
