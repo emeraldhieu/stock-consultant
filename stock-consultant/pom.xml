@@ -8,7 +8,7 @@
     <artifactId>stock-consultant</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Stock Consultant</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,14 +46,14 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- resteasy implementation. -->
+        <!-- resteasy implementation -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
             <version>${resteasy.version}</version>
         </dependency>
 
-        <!-- Marshalling and unmarshalling. -->
+        <!-- Marshalling and unmarshalling -->
         <!--<dependency>-->
             <!--<groupId>org.jboss.resteasy</groupId>-->
             <!--<artifactId>resteasy-jaxb-provider</artifactId>-->
@@ -67,14 +67,14 @@
             <version>3.12.1</version>
         </dependency>
 
-        <!-- Used for generating boilerplate getters and setters. -->
+        <!-- Used for generating boilerplate getters and setters -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.4</version>
         </dependency>
 
-        <!-- Mostly used for String processing. -->
+        <!-- Mostly used for String processing -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -88,7 +88,7 @@
             <version>20180813</version>
         </dependency>
 
-        <!-- Initialize a servlet container with servlet 3.0. -->
+        <!-- Initialize a servlet container with servlet 3.0 -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-servlet-initializer</artifactId>
@@ -147,7 +147,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Used for integration tests. -->
+        <!-- Used for integration tests -->
         <!--<dependency>-->
             <!--<groupId>org.jboss.resteasy</groupId>-->
             <!--<artifactId>resteasy-spring-boot-starter-test</artifactId>-->
@@ -164,10 +164,24 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${springboot.version}</version>
+
+                <!-- Used for remote debugging -->
                 <configuration>
                     <!-- Remotely debug with VM options "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005". -->
                     <jvmArguments>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
                 </configuration>
+
+                <!-- Used for packaging to executable spring boot jar -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>exec</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Used for creating war file and running with Tomcat -->

@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Component;
 
 import com.emeraldhieu.closeprice.ClosePrice;
@@ -37,6 +38,7 @@ import okhttp3.Response;
 @Slf4j
 @Component
 @Path("api/v2")
+@EnableAutoConfiguration
 public class StockConsultant extends Application {
 
     /**
