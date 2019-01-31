@@ -2,13 +2,10 @@ package com.emeraldhieu;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Configuration;
 
-/**
- * SpringBoot entry point application
- *
- * @author Fabio Carvalho (facarvalho@paypal.com or fabiocarvalho777@gmail.com)
- */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = { "com.emeraldhieu" })
+@Configuration
 public class Application {
 
     public static void main(String[] args) {
