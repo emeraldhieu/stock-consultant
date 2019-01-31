@@ -56,6 +56,12 @@ public class ClosePriceService {
     }
 
     @GET
+    @Path("hello")
+    public Object hello() {
+        return "Hello world";
+    }
+
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{ticker}/closePrice")
     @ClosePriceValidator

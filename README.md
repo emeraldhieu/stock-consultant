@@ -4,7 +4,23 @@ Stock Consultant serves stock data of all companies around the world based on pr
 
 ## Getting started
 
-(To be updated)
+Check out the project. In home directory, run the following commands.
+
+`cd stock-consultant` # Change directory to 'stock-consultant'
+
+`mvn spring-boot:run` # Run Spring Boot microservice
+
+OR you can
+
+`mvn clean install` # Build a jar file
+
+`java -jar stock-consultant-1.0-SNAPSHOT-exec.jar` # Run the executable
+
+To check if it works, open `http://localhost:8080/api/v2/hello` on your web browser
+
+`Hello world` displayed means it's working!!
+
+⚠️ Make sure port 8080 is available. 
 
 ## Querying close price
 
