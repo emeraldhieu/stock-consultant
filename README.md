@@ -164,4 +164,15 @@ The tables below show several common exceptions, their status code and error cod
 
 As for the exceptions that are not mentioned above, the status code is 500 and the error code is "unknown".
 
+## TODO
+
+The project still needs more time for improvements.
+
+These are the TODOs that I am going to do in the near future.
+
+* Provide coverage and more unit tests
+* Have integration tests configured to test all use cases
+  * Provide some tests using `restassured`
+* Implement caching for `/multi` endpoint
+* Improve performance of `/multi` endpoint
 
