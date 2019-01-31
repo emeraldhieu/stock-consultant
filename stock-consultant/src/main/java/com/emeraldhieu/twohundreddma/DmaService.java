@@ -125,4 +125,32 @@ public class DmaService {
                 .average()
                 .getAsDouble();
     }
+
+    /**
+     * Used for testing.
+     */
+    void setClient(OkHttpClient client) {
+        this.client = client;
+    }
+
+    /**
+     * Used for testing.
+     */
+    void setCacheService(CacheService cacheService) {
+        this.cacheService = cacheService;
+    }
+
+    /**
+     * Used for testing.
+     */
+    public void setErrorHandlingService(ErrorHandlingService errorHandlingService) {
+        this.errorHandlingService = errorHandlingService;
+    }
+
+    /**
+     * Used for testing.
+     */
+    public void setClosePriceService(ClosePriceService closePriceService) {
+        this.closePriceService = closePriceService;
+    }
 }

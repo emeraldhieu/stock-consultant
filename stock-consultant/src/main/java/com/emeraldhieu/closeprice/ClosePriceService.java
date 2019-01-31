@@ -138,4 +138,25 @@ public class ClosePriceService {
                 .toString();
         return hashCode;
     }
+
+    /**
+     * Used for testing.
+     */
+    void setClient(OkHttpClient client) {
+        this.client = client;
+    }
+
+    /**
+     * Used for testing.
+     */
+    void setCacheService(CacheService cacheService) {
+        this.cacheService = cacheService;
+    }
+
+    /**
+     * Used for testing.
+     */
+    public void setErrorHandlingService(ErrorHandlingService errorHandlingService) {
+        this.errorHandlingService = errorHandlingService;
+    }
 }
