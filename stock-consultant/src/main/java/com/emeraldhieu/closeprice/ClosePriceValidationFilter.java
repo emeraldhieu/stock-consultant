@@ -28,7 +28,7 @@ public class ClosePriceValidationFilter implements ContainerRequestFilter {
     private void validateDate(MultivaluedMap<String, String> queryParameters) {
         String startDate = queryParameters.getFirst("startDate");
         if (startDate == null) {
-            // TODO
+            // Delegate validation to endpoints to suggest a possible start date.
             return;
         }
         String endDate = queryParameters.getFirst("endDate");

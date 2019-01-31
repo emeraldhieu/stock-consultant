@@ -16,11 +16,13 @@ import javax.ws.rs.ext.Provider;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.spi.ReaderException;
 import org.jboss.resteasy.spi.WriterException;
+import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Provider
+@Component
 public class RestExceptionMapper implements ExceptionMapper<Throwable> {
 
     @Context
