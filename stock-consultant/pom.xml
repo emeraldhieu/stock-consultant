@@ -54,13 +54,6 @@
             <version>${resteasy.version}</version>
         </dependency>
 
-        <!-- Marshalling and unmarshalling -->
-        <!--<dependency>-->
-            <!--<groupId>org.jboss.resteasy</groupId>-->
-            <!--<artifactId>resteasy-jaxb-provider</artifactId>-->
-            <!--<version>3.6.2.Final</version>-->
-        <!--</dependency>-->
-
         <!-- HTTP client for HTTP requests -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -103,21 +96,6 @@
             <version>${resteasy.version}</version>
         </dependency>
 
-        <!-- Used for @JsonIgnore. (No need. There's one in "resteasy-spring-boot-starter".) -->
-        <!--<dependency>-->
-            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
-            <!--<artifactId>jackson-annotations</artifactId>-->
-            <!--<version>2.9.8</version>-->
-        <!--</dependency>-->
-
-        <!-- Used for testing endpoints (integration tests) -->
-        <!--<dependency>-->
-            <!--<groupId>io.rest-assured</groupId>-->
-            <!--<artifactId>rest-assured</artifactId>-->
-            <!--<version>${restAssuredVersion}</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
-
         <!-- Testing FTW! -->
         <dependency>
             <groupId>junit</groupId>
@@ -126,20 +104,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- TestNG. Not quite sure what it is used for. -->
-        <!--<dependency>-->
-            <!--<groupId>org.testng</groupId>-->
-            <!--<artifactId>testng</artifactId>-->
-            <!--<version>6.1.1</version>-->
-            <!--<scope>test</scope>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.yaml</groupId>-->
-                    <!--<artifactId>snakeyaml</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
-        <!--</dependency>-->
-
         <!-- Mockito to mock behaviors -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -147,14 +111,6 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Used for integration tests -->
-        <!--<dependency>-->
-            <!--<groupId>org.jboss.resteasy</groupId>-->
-            <!--<artifactId>resteasy-spring-boot-starter-test</artifactId>-->
-            <!--<version>2.0.1.Final</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
 
         <!-- Used for HashFunction -->
         <dependency>
