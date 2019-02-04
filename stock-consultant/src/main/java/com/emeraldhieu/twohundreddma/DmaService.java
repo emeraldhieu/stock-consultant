@@ -150,7 +150,7 @@ public class DmaService {
     /**
      * Used for testing.
      */
-    public void setClosePriceService(ClosePriceService closePriceService) {
+    void setClosePriceService(ClosePriceService closePriceService) {
         this.closePriceService = closePriceService;
     }
 }

@@ -162,7 +162,7 @@ public class ClosePriceService {
     /**
      * Used for testing.
      */
-    public void setErrorHandlingService(ErrorHandlingService errorHandlingService) {
+    void setErrorHandlingService(ErrorHandlingService errorHandlingService) {
         this.errorHandlingService = errorHandlingService;
     }
 }

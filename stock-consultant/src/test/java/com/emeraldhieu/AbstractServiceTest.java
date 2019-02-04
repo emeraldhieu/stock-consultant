@@ -24,7 +24,7 @@ public abstract class AbstractServiceTest {
         Response response = new Response.Builder()
                 .request(new Request.Builder().url("https://anything").build())
                 .protocol(Protocol.HTTP_1_1)
-                .code(201)
+                .code(200)
                 .message("OK")
                 .body(responseBody)
                 .build();
