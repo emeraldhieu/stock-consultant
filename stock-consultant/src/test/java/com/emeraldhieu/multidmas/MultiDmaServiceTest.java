@@ -1,6 +1,5 @@
 package com.emeraldhieu.multidmas;
 
-import static com.emeraldhieu.multidmas.MultiDmaService.GET_200_DAY_MOVING_AVERAGE_URI_PATTERN;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -87,7 +86,7 @@ public class MultiDmaServiceTest extends AbstractServiceTest {
     private Call mockCall(String ticker) throws Exception {
         String multidmasReponse = new String(Files.readAllBytes(Paths.get(ClassLoader.getSystemResource("responses/multidma/" + ticker + ".json").toURI())));
 
-        String requestUri = String.format(GET_200_DAY_MOVING_AVERAGE_URI_PATTERN, ticker, "2000-01-01");
+        String requestUri = String.format("http://anything", ticker, "2000-01-01");
         Request request = new Request.Builder()
                 .url(requestUri)
                 .build();

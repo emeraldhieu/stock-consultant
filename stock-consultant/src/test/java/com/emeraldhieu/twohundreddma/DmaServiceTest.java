@@ -2,6 +2,10 @@ package com.emeraldhieu.twohundreddma;
 
 import static org.junit.Assert.assertEquals;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,20 +40,8 @@ public class DmaServiceTest extends AbstractServiceTest {
     @Test
     public void get200dma() throws Exception {
         // GIVEN
-        String dmaJsonResponse = " {\n" +
-                "    \"dataset_data\": {\n" +
-                "        \"data\": [\n" +
-                "            [\n" +
-                "                \"2012-05-18\",\n" +
-                "                38.2318\n" +
-                "            ],\n" +
-                "            [\n" +
-                "                \"2012-05-21\",\n" +
-                "                34.03\n" +
-                "            ]\n" +
-                "        ]\n" +
-                "    }\n" +
-                "}";
+        Path responseFilePath = Paths.get(ClassLoader.getSystemResource("responses/dma/" + ticker + ".json").toURI());
+        String dmaJsonResponse = new String(Files.readAllBytes(responseFilePath));
         OkHttpClient client = initHttpClient(dmaJsonResponse);
         dmaService.setClient(client);
 
