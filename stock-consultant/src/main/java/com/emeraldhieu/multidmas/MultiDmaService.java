@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import com.emeraldhieu.Config;
 import com.emeraldhieu.cache.CacheService;
-import com.emeraldhieu.closeprice.ClosePriceService;
 import com.emeraldhieu.errorhandler.ErrorHandlingService;
 import com.emeraldhieu.twohundreddma.DmaService;
 import com.emeraldhieu.twohundreddma.DmaValidator;
@@ -35,7 +34,7 @@ import okhttp3.Response;
 @Path("api/v2")
 public class MultiDmaService {
 
-    private static final String GET_200_DAY_MOVING_AVERAGE_URI_PATTERN =
+    static final String GET_200_DAY_MOVING_AVERAGE_URI_PATTERN =
             Config.QUANDL_API_ENDPOINT + "%s/data.json?column_index=4&collapse=daily&order=asc&limit=200&start_date=%s&api_key=" + Config.API_KEY;
 
     private OkHttpClient client = new OkHttpClient();
@@ -45,9 +44,6 @@ public class MultiDmaService {
 
     @Autowired
     private ErrorHandlingService errorHandlingService;
-
-    @Autowired
-    private ClosePriceService closePriceService;
 
     @Autowired
     private DmaService dmaService;
@@ -134,5 +130,33 @@ public class MultiDmaService {
                 .build();
 
         return multiDma;
+    }
+
+    /**
+     * Used for testing.
+     */
+    void setCacheService(CacheService cacheService) {
+        this.cacheService = cacheService;
+    }
+
+    /**
+     * Used for testing.
+     */
+    void setErrorHandlingService(ErrorHandlingService errorHandlingService) {
+        this.errorHandlingService = errorHandlingService;
+    }
+
+    /**
+     * Used for testing.
+     */
+    void setClient(OkHttpClient client) {
+        this.client = client;
+    }
+
+    /**
+     * Used for testing.
+     */
+    void setDmaService(DmaService dmaService) {
+        this.dmaService = dmaService;
     }
 }
