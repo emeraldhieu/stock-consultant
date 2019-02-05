@@ -15,43 +15,34 @@
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <resteasy.version>3.6.2.Final</resteasy.version>
-        <springboot.version>2.1.2.RELEASE</springboot.version>
-        <restAssuredVersion>3.0.5</restAssuredVersion>
-        <junitVersion>4.12</junitVersion>
+        <resteasyVersion>3.6.2.Final</resteasyVersion>
+        <springBootVersion>2.1.2.RELEASE</springBootVersion>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>${springboot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
-        <!-- Spring Boot -->
+        <!-- Spring Boot. Used for annotations like @SpringBootApplication. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${springBootVersion}</version>
         </dependency>
 
+        <!-- Used to start JAX-RS's Application in Spring Boot environment -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-spring-boot-starter</artifactId>
-            <version>2.0.1.Final</version>
+            <version>3.0.0.Final</version>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- resteasy implementation -->
+        <!--
+          Resteasy implementation for JAX-RS specification.
+          Used for annotations like GET, Produces, QueryParam, etc.
+        -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
-            <version>${resteasy.version}</version>
+            <version>${resteasyVersion}</version>
         </dependency>
 
         <!-- HTTP client for HTTP requests -->
@@ -82,25 +73,21 @@
             <version>20180813</version>
         </dependency>
 
-        <!-- Initialize a servlet container with servlet 3.0 -->
+        <!-- Initialize a servlet container with servlet 3.0.
+             Just enable it if you want to run a WAR file with Tomcat. -->
+        <!--
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-servlet-initializer</artifactId>
-            <version>${resteasy.version}</version>
+            <version>${resteasyVersion}</version>
         </dependency>
-
-        <!-- Bean validation for resteasy -->
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-validator-provider-11</artifactId>
-            <version>${resteasy.version}</version>
-        </dependency>
+        -->
 
         <!-- Testing FTW! -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junitVersion}</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 
@@ -133,7 +120,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${springboot.version}</version>
+                <version>${springBootVersion}</version>
 
                 <!-- Used for remote debugging -->
                 <configuration>
@@ -154,7 +141,11 @@
                 </executions>
             </plugin>
 
-            <!-- Used for creating war file and running with Tomcat -->
+            <!--
+              Used for creating WAR file.
+              Just enable it if you're building a WAR file for servlet 3.0 (without web.xml).
+             -->
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -163,6 +154,7 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
+            -->
         </plugins>
     </build>
 
