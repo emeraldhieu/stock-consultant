@@ -106,12 +106,19 @@
             <version>19.0</version>
         </dependency>
 
+        <!-- Used for caching response in memory on server side. -->
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>3.6.1</version>
         </dependency>
 
+        <!-- Enable /actuator's endpoints -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${springBootVersion}</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -6,7 +6,7 @@ import javax.ws.rs.core.Application;
 import org.springframework.stereotype.Component;
 
 @Component
-@ApplicationPath("")
+@ApplicationPath(".rest")
 public class JaxRsApplication extends Application {
 
 }
