@@ -10,11 +10,14 @@ import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
+import org.springframework.stereotype.Component;
+
 import com.emeraldhieu.twohundreddma.DmaValidator;
 
+@Component
 @Provider
-@ClosePriceValidator
 @PreMatching
+@ClosePriceValidator
 public class ClosePriceValidationFilter implements ContainerRequestFilter {
 
     @Override

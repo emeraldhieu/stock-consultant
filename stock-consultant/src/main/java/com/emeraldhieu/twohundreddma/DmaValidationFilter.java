@@ -10,9 +10,12 @@ import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
+import org.springframework.stereotype.Component;
+
+@Component
 @Provider
-@DmaValidator
 @PreMatching
+@DmaValidator
 public class DmaValidationFilter implements ContainerRequestFilter {
 
     @Override
