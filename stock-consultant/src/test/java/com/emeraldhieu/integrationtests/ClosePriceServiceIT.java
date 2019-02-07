@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.*;
 
 import org.junit.Test;
 
-public class ClosePriceServiceIT extends AbstractIT {
+public class ClosePriceServiceIT {
 
     @Test
     public void validRequestReturns200() {

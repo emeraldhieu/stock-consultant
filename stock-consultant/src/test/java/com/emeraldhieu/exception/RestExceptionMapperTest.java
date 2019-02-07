@@ -85,14 +85,14 @@ public class RestExceptionMapperTest {
     @Test
     public void trimJaxRsInformation() {
         // GIVEN
-        String errorMessage = "RESTEASY003210: Could not find resource for full path: http://localhost:8080/magnoliaAuthor/.rest/delivery/tours";
+        String errorMessage = "RESTEASY003210: Could not find resource for full path: http://somethingNotFound";
         NotFoundException exception = new NotFoundException(errorMessage);
 
         // WHEN
         Response response = restExceptionMapper.toResponse(exception);
 
         // THEN
-        assertErrorResponse(response, NOT_FOUND, "Could not find resource for full path: http://localhost:8080/magnoliaAuthor/.rest/delivery/tours", "notFound");
+        assertErrorResponse(response, NOT_FOUND, "Could not find resource for full path: http://somethingNotFound", "notFound");
     }
 
     private void assertErrorResponse(Response response, Response.Status expectedStatusCode, String expectedErrorMessage, String expectedErrorCode) {

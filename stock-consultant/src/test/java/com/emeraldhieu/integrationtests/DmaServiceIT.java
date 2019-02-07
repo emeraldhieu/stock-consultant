@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.*;
 
 import org.junit.Test;
 
-public class DmaServiceIT extends AbstractIT {
+public class DmaServiceIT {
 
     @Test
     public void validRequestReturns200() {
