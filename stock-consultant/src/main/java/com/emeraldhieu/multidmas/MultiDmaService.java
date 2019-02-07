@@ -3,6 +3,7 @@ package com.emeraldhieu.multidmas;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.PostConstruct;
@@ -58,7 +59,10 @@ public class MultiDmaService {
     @Path("/multi")
     @DmaValidator
     public Object getMultipleDma(@QueryParam("tickers") String tickersParam,
-                                 @QueryParam("startDate") String startDate) throws Exception {
+                                 @QueryParam("startDate") String startDateParam) throws Exception {
+
+        String startDate = Objects.toString(startDateParam, "");
+
         String[] tickers = tickersParam.split(",");
 
         List<CompletableFuture<MultiDma.TwoHundredDma.Dma>> futureList = new ArrayList<>();
