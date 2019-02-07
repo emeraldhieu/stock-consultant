@@ -68,10 +68,7 @@ public class ClosePriceService {
     public Object getClosePrice(@PathParam("ticker") String ticker,
                                 @QueryParam("startDate") String startDateParam,
                                 @QueryParam("endDate") String endDateParam) throws Exception {
-        /*
-         * Somehow startDate and endDate params will be omitted.
-         * Quandl endpoints handle empty start_date and end_date pretty well.
-         */
+
         String startDate = Objects.toString(startDateParam, "");
         String endDate = Objects.toString(endDateParam, "");
 
@@ -139,7 +136,7 @@ public class ClosePriceService {
 
     public String generateHashCode(String ticker, String startDate, String endDate) {
         String hashCode = Hashing.sha256()
-                .hashString(ticker + Objects.toString(startDate, "") + Objects.toString(endDate, ""),
+                .hashString(ticker + startDate + endDate,
                         Charset.defaultCharset())
                 .toString();
         return hashCode;
