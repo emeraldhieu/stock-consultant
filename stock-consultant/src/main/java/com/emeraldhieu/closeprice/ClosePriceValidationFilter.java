@@ -6,18 +6,14 @@ import java.time.format.DateTimeFormatter;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.Provider;
 
 import org.springframework.stereotype.Component;
 
-import com.emeraldhieu.twohundreddma.DmaValidator;
+import lombok.extern.apachecommons.CommonsLog;
 
 @Component
-@Provider
-@PreMatching
-@ClosePriceValidator
+@CommonsLog
 public class ClosePriceValidationFilter implements ContainerRequestFilter {
 
     @Override
@@ -35,20 +31,20 @@ public class ClosePriceValidationFilter implements ContainerRequestFilter {
             return;
         }
         String endDate = queryParameters.getFirst("endDate");
-        LocalDate startDateObj = null, endDateObj = null;
-        if (startDate != null) {
-            try {
-                startDateObj = LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE);
-            } catch (Exception e) {
-                throw new NotFoundException("Invalid date");
-            }
+        LocalDate startDateObj;
+        try {
+            startDateObj = LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (Exception e) {
+            throw new NotFoundException("Invalid date");
         }
-        if (endDate != null) {
-            try {
-                endDateObj = LocalDate.parse(endDate, DateTimeFormatter.ISO_LOCAL_DATE);
-            } catch (Exception e) {
-                throw new NotFoundException("Invalid date");
-            }
+        if (endDate == null) {
+            return;
+        }
+        LocalDate endDateObj;
+        try {
+            endDateObj = LocalDate.parse(endDate, DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (Exception e) {
+            throw new NotFoundException("Invalid date");
         }
         if (startDateObj != null && endDateObj != null && endDateObj.isBefore(startDateObj)) {
             throw new NotFoundException("Invalid date range");
