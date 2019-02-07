@@ -16,7 +16,7 @@ OR you can
 
 `java -jar stock-consultant-1.0-SNAPSHOT-exec.jar` # Run the executable
 
-To check if it works, open `http://localhost:8080/api/v2/hello` on your web browser
+To check if it works, open `http://localhost:8080/.rest/api/v2/hello` on your web browser
 
 `Hello world` displayed means it's working!!
 
@@ -25,7 +25,7 @@ To check if it works, open `http://localhost:8080/api/v2/hello` on your web brow
 ## Querying close price
 
 ```
-GET /api/v2/<ticker>/closePrice?startDate=<startDate>&endDate=<endDate>
+GET /.rest/api/v2/<ticker>/closePrice?startDate=<startDate>&endDate=<endDate>
 ```
 
 | Parameters  | Description | Value format | Default |
@@ -38,7 +38,7 @@ GET /api/v2/<ticker>/closePrice?startDate=<startDate>&endDate=<endDate>
 
 ```sh
 curl -X GET \
-"http://<host>/api/v2/FB/closePrice?startDate=2014-01-01&endDate=2014-12-03"
+"http://<host>/.rest/api/v2/FB/closePrice?startDate=2014-01-01&endDate=2014-12-03"
 ```
 
 ##### Response
@@ -72,7 +72,7 @@ For conciseness, only three data rows appear in the example response.
 ## Querying 200-day-moving average
 
 ```
-GET /api/v2/<ticker>/200dma?startDate=<startDate>
+GET /.rest/api/v2/<ticker>/200dma?startDate=<startDate>
 ```
 
 | Parameters  | Description | Value format | Default |
@@ -84,7 +84,7 @@ GET /api/v2/<ticker>/200dma?startDate=<startDate>
 
 ```sh
 curl -X GET \
-"http://<host>/api/v2/FB/200dma?startDate=2000-01-01"
+"http://<host>/.rest/api/v2/FB/200dma?startDate=2000-01-01"
 ```
 
 ##### Response
@@ -101,7 +101,7 @@ curl -X GET \
 ## Querying a list of 200-day-moving averages
 
 ```
-GET /api/v2/multi?tickers=<tickers>&startDate=<startDate>
+GET /.rest/api/v2/multi?tickers=<tickers>&startDate=<startDate>
 ```
 
 | Parameters  | Description | Value format | Default |
@@ -113,7 +113,7 @@ GET /api/v2/multi?tickers=<tickers>&startDate=<startDate>
 
 ```sh
 curl -X GET \
-"http://<host>/api/v2/multi?tickers=FB,MSFT,TWTR,GOOGL,AMZN&startDate=2000-01-01"
+"http://<host>/.rest/api/v2/multi?tickers=FB,MSFT,TWTR,GOOGL,AMZN&startDate=2000-01-01"
 ```
 
 ##### Response
