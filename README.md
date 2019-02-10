@@ -4,23 +4,31 @@ Stock Consultant serves stock data of all companies around the world based on pr
 
 ## Getting started
 
-Check out the project. In home directory, run the following commands.
+Check out the project. In project's root directory, run the following commands.
 
-`cd stock-consultant` # Change directory to 'stock-consultant'
+`cd stock-consultant` # Change directory to "stock-consultant"
 
-`mvn spring-boot:run` # Run Spring Boot microservice
+You can do either one of these
 
-OR you can
+##### Run the project using Maven plugin
 
-`mvn clean install` # Build a jar file
+`mvn spring-boot:run`
+
+##### Build and execute a JAR file
+
+`mvn clean install` # Build a jar file into "target" folder
+
+`cd target` # Change directory to "target" folder
 
 `java -jar stock-consultant-1.0-SNAPSHOT-exec.jar` # Run the executable
 
-To check if it works, open `http://localhost:8080/.rest/api/v2/hello` on your web browser
+#### Check it out!
+
+Open `http://localhost:8080/.rest/api/v2/hello` on your web browser
 
 `Hello world` displayed means it's working!!
 
-⚠️ Make sure port 8080 is available. 
+⚠️ Make sure port 8080 is available before executing above commands.
 
 ## Querying close price
 
@@ -180,15 +188,19 @@ The tables below show several common exceptions, their status code and error cod
 
 As for the exceptions that are not mentioned above, the status code is 500 and the error code is "unknown".
 
+## Caching
+
+(To be updated)
+
 ## TODO
 
 The project still needs more time for improvements.
 
 These are the TODOs that I am going to do in the near future.
 
+* Add unit tets and integration tests for caching
 * Provide coverage and more unit tests
-* Have integration tests configured to test all use cases
-  * Provide some tests using `restassured`
 * Implement caching for `/multi` endpoint
 * Improve performance of `/multi` endpoint
+* Extract caching processing into ContainerRequestFilter and ResponseRequestFilter
 
