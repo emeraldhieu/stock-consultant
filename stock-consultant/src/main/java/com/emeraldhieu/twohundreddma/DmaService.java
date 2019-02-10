@@ -26,12 +26,14 @@ import com.emeraldhieu.closeprice.ClosePrice;
 import com.emeraldhieu.closeprice.ClosePriceService;
 import com.emeraldhieu.errorhandler.ErrorHandlingService;
 
+import lombok.extern.apachecommons.CommonsLog;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 @Component
 @Path("api/v2")
+@CommonsLog
 public class DmaService {
 
     private static final String GET_200_DAY_MOVING_AVERAGE_URI_PATTERN =
@@ -73,6 +75,7 @@ public class DmaService {
             ClosePrice.Price cachedPrice = cacheService.get(closePriceService
                     .generateHashCode(ticker, startDate, endDateObj.format(DateTimeFormatter.ISO_LOCAL_DATE)));
             if (cachedPrice != null) {
+                log.debug("Retrieving cache of close price...");
                 TwoHundredDayMovingAverage.TwoHundredDma twoHundredDma = TwoHundredDayMovingAverage.TwoHundredDma.builder()
                         .ticker(ticker)
                         .avg(String.valueOf(getAverage(cachedPrice)))

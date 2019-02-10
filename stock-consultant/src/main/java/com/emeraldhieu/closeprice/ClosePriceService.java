@@ -29,12 +29,14 @@ import com.emeraldhieu.cache.CacheService;
 import com.emeraldhieu.errorhandler.ErrorHandlingService;
 import com.google.common.hash.Hashing;
 
+import lombok.extern.apachecommons.CommonsLog;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 @Component
 @Path("api/v2")
+@CommonsLog
 public class ClosePriceService {
 
     private static final String GET_CLOSE_PRICE_URI_PATTERN =
@@ -77,6 +79,7 @@ public class ClosePriceService {
 
         // Return cached close price built from price.
         if (cachedPrice != null) {
+            log.debug("Retrieving cache of close price...");
             ClosePrice closePrice = ClosePrice.builder()
                     .prices(Collections.singletonList(cachedPrice))
                     .build();
@@ -110,6 +113,7 @@ public class ClosePriceService {
                     .build();
 
             // Cache the price!
+            log.debug("Caching close price...");
             cacheService.put(generateHashCode(ticker, startDate, endDate), price);
 
             ClosePrice closePrice = ClosePrice.builder()
