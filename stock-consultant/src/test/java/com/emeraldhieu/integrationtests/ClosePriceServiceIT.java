@@ -73,7 +73,7 @@ public class ClosePriceServiceIT {
     }
 
     @Test
-    public void omittingStartDateReturns404AndSuggestsAPossibleStartDate() {
+    public void omittingStartDateReturns404() {
         given().when()
                 .get("FB/closePrice?endDate=2014-12-03")
                 .then()
@@ -81,7 +81,7 @@ public class ClosePriceServiceIT {
                 .body(
                         "", hasKey("error"),
                         "error.code", equalTo("notFound"),
-                        "error.message", containsString("'startDate' is missing. Try again with")
+                        "error.message", equalTo("Invalid date")
                 );
     }
 

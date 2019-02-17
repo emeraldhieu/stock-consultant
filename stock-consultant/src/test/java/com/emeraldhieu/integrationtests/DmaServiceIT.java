@@ -47,7 +47,7 @@ public class DmaServiceIT {
     }
 
     @Test
-    public void omittingStartDateReturns404AndSuggestsAPossibleStartDate() {
+    public void omittingStartDateReturns404() {
         given().when()
                 .get("FB/200dma?endDate=2014-12-03")
                 .then()
@@ -55,7 +55,20 @@ public class DmaServiceIT {
                 .body(
                         "", hasKey("error"),
                         "error.code", equalTo("notFound"),
-                        "error.message", containsString("'startDate' is missing. Try again with")
+                        "error.message", containsString("Invalid date")
+                );
+    }
+
+    @Test
+    public void noDataReturns404AndSuggestsAPossibleStartDate() {
+        given().when()
+                .get("FB/200dma?startDate=3000-12-03")
+                .then()
+                .statusCode(404)
+                .body(
+                        "", hasKey("error"),
+                        "error.code", equalTo("notFound"),
+                        "error.message", containsString("There is no data for this 'startDate'. Try again with")
                 );
     }
 }

@@ -18,11 +18,11 @@ public class MultiDmaServiceIT {
                 .root("200dma")
                 .body(
                         "dmas[0].ticker", either(equalTo("FB")).or(equalTo("MSFT")).or(equalTo("TWTR")),
-                        "dmas[0]", hasKey("avg"),
+                        "dmas[0]", either(hasKey("avg")).or(hasEntry("errorMessage", "Too many requests at the same time")),
                         "dmas[1].ticker", either(equalTo("FB")).or(equalTo("MSFT")).or(equalTo("TWTR")),
-                        "dmas[1]", hasKey("avg"),
+                        "dmas[1]", either(hasKey("avg")).or(hasEntry("errorMessage", "Too many requests at the same time")),
                         "dmas[2].ticker", either(equalTo("FB")).or(equalTo("MSFT")).or(equalTo("TWTR")),
-                        "dmas[2]", hasKey("avg")
+                        "dmas[2]", either(hasKey("avg")).or(hasEntry("errorMessage", "Too many requests at the same time"))
                 );
     }
 
@@ -45,20 +45,33 @@ public class MultiDmaServiceIT {
 
     @Test
     public void omittingStartDateReturnsDataOfPossibleStartDate() {
-        // TODO Find a better way to assert unorder list of dmas. JsonPath could be used.
         given().when()
                 .get("/multi?tickers=FB,MSFT,TWTR")
+                .then()
+                .statusCode(404)
+                .body(
+                        "", hasKey("error"),
+                        "error.code", equalTo("notFound"),
+                        "error.message", containsString("Invalid date")
+                );
+    }
+
+    @Test
+    public void noDataReturnsDataOfPossibleStartDate() {
+        // TODO Find a better way to assert unorder list of dmas. JsonPath could be used.
+        given().when()
+                .get("/multi?tickers=FB,MSFT,TWTR&startDate=3000-01-01")
                 .then()
                 .statusCode(200)
                 .body("", hasKey("200dma"))
                 .root("200dma")
                 .body(
                         "dmas[0].ticker", either(equalTo("FB")).or(equalTo("MSFT")).or(equalTo("TWTR")),
-                        "dmas[0]", hasKey("avg"),
+                        "dmas[0].errorMessage", either(containsString("There is no data for this 'startDate'. Try again with")).or(equalTo("Too many requests at the same time")),
                         "dmas[1].ticker", either(equalTo("FB")).or(equalTo("MSFT")).or(equalTo("TWTR")),
-                        "dmas[1]", hasKey("avg"),
+                        "dmas[1].errorMessage", either(containsString("There is no data for this 'startDate'. Try again with")).or(equalTo("Too many requests at the same time")),
                         "dmas[2].ticker", either(equalTo("FB")).or(equalTo("MSFT")).or(equalTo("TWTR")),
-                        "dmas[2]", hasKey("avg")
+                        "dmas[2].errorMessage", either(containsString("There is no data for this 'startDate'. Try again with")).or(equalTo("Too many requests at the same time"))
                 );
     }
 }

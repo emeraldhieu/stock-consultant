@@ -40,7 +40,7 @@ public class DmaValidationFilter implements ContainerRequestFilter {
     private void validateDate(MultivaluedMap<String, String> queryParameters) {
         String startDate = queryParameters.getFirst("startDate");
         if (startDate == null) {
-            return;
+            throw new NotFoundException("Invalid date");
         }
         try {
             LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE);

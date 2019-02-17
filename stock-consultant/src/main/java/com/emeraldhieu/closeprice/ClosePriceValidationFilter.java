@@ -42,8 +42,7 @@ public class ClosePriceValidationFilter implements ContainerRequestFilter {
     private void validateDate(MultivaluedMap<String, String> queryParameters) {
         String startDate = queryParameters.getFirst("startDate");
         if (startDate == null) {
-            // Delegate validation to endpoints to suggest a possible start date.
-            return;
+            throw new NotFoundException("Invalid date");
         }
         String endDate = queryParameters.getFirst("endDate");
         LocalDate startDateObj;

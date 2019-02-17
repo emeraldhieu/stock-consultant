@@ -1,6 +1,5 @@
 package com.emeraldhieu.multidmas;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +36,10 @@ public class MultiDmaService {
 
     static final String GET_200_DAY_MOVING_AVERAGE_URI_PATTERN =
             Config.QUANDL_API_ENDPOINT + "%s/data.json?column_index=4&collapse=daily&order=asc&limit=200&start_date=%s&api_key=" + Config.API_KEY;
+
+    private static final String SUGGESTED_START_DATE_MESSAGE = "There is no data for this 'startDate'. Try again with 'startDate=%s'.";
+
+    private static final String NO_DATA_FOR_ANY_DATE = "There is no data for any date.";
 
     private OkHttpClient client = new OkHttpClient();
 
@@ -85,6 +88,7 @@ public class MultiDmaService {
                         return invalidTickerDma;
                     }
 
+                    // TODO Improve solution to remove this unexpected error.
                     if (!errorHandlingService.isRequestSlowEnough(responseObj)) {
                         MultiDma.TwoHundredDma.Dma invalidTickerDma = MultiDma.TwoHundredDma.Dma.builder()
                                 .ticker(ticker)
@@ -96,13 +100,25 @@ public class MultiDmaService {
                     JSONObject dataSetObject = (JSONObject) responseObj.get("dataset_data");
                     JSONArray dataArray = (JSONArray) dataSetObject.get("data");
 
+                    if (dataArray.isEmpty()) {
+                        String suggestedStartDate = dmaService.getSuggestedStartDate(ticker, startDate);
+                        String errorMessage = !"".equals(suggestedStartDate)
+                                ? String.format(SUGGESTED_START_DATE_MESSAGE, suggestedStartDate)
+                                : NO_DATA_FOR_ANY_DATE;
+                        MultiDma.TwoHundredDma.Dma noDataDma = MultiDma.TwoHundredDma.Dma.builder()
+                                .ticker(ticker)
+                                .errorMessage(errorMessage)
+                                .build();
+                        return noDataDma;
+                    }
+
                     MultiDma.TwoHundredDma.Dma dma = MultiDma.TwoHundredDma.Dma.builder()
                             .ticker(ticker)
                             .avg(String.valueOf(dmaService.getAverage(dataArray)))
                             .build();
 
                     return dma;
-                } catch (IOException e) {
+                } catch (Exception e) {
                     log.error(e.getMessage());
                 }
                 return null;

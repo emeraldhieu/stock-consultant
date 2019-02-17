@@ -5,14 +5,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -41,8 +38,6 @@ public class ClosePriceService {
 
     private static final String GET_CLOSE_PRICE_URI_PATTERN =
             Config.QUANDL_API_ENDPOINT + "%s/data.json?order=asc&column_index=4&start_date=%s&end_date=%s&api_key=" + Config.API_KEY;
-
-    private static final String SUGGESTED_START_DATE_MESSAGE = "'startDate' is missing. Try again with 'startDate=%s'.";
 
     private OkHttpClient client = new OkHttpClient();
 
@@ -98,8 +93,6 @@ public class ClosePriceService {
             JSONObject dataSetObject = (JSONObject) responseObj.get("dataset_data");
             JSONArray dataArray = (JSONArray) dataSetObject.get("data");
 
-            suggestStartDate(startDate, dataArray);
-
             // Get list of dateCloses.
             Iterable<Object> iterable = () -> dataArray.iterator();
             List<List<String>> dateCloseList = StreamSupport.stream(iterable.spliterator(), false)
@@ -122,20 +115,6 @@ public class ClosePriceService {
 
             return closePrice;
         }
-    }
-
-    public void suggestStartDate(String startDate, JSONArray dataArray) {
-        if ("".equals(startDate)) {
-            throw new NotFoundException(String.format(SUGGESTED_START_DATE_MESSAGE, getSuggestedStartDate(dataArray)));
-        }
-    }
-
-    public String getSuggestedStartDate(JSONArray dataArray) {
-        String suggestedStartDate = StreamSupport.stream(Spliterators.spliteratorUnknownSize(dataArray.iterator(), Spliterator.ORDERED), false)
-                .map(JSONArray.class::cast)
-                .map(closePrice -> closePrice.getString(0))
-                .findFirst().get();
-        return suggestedStartDate;
     }
 
     public String generateHashCode(String ticker, String startDate, String endDate) {

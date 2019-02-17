@@ -9,6 +9,7 @@ import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -41,6 +42,10 @@ public class DmaService {
 
     private static final String GET_FIRST_POSSIBLE_START_DATE_URI_PATTERN =
             Config.QUANDL_API_ENDPOINT + "%s/data.json?column_index=4&collapse=daily&order=asc&limit=1&api_key=" + Config.API_KEY;
+
+    private static final String SUGGESTED_START_DATE_MESSAGE = "There is no data for this 'startDate'. Try again with 'startDate=%s'.";
+
+    private static final String NO_DATA_FOR_ANY_DATE = "There is no data for any date.";
 
     private OkHttpClient client = new OkHttpClient();
 
@@ -86,9 +91,7 @@ public class DmaService {
             }
         }
 
-        String requestUri = "".equals(startDate)
-                ? String.format(GET_FIRST_POSSIBLE_START_DATE_URI_PATTERN, ticker)
-                : String.format(GET_200_DAY_MOVING_AVERAGE_URI_PATTERN, ticker, startDate);
+        String requestUri = String.format(GET_200_DAY_MOVING_AVERAGE_URI_PATTERN, ticker, startDate);
         Request request = new Request.Builder().url(requestUri).build();
 
         try (Response response = client.newCall(request).execute()) {
@@ -100,7 +103,7 @@ public class DmaService {
             JSONObject dataSetObject = (JSONObject) responseObj.get("dataset_data");
             JSONArray dataArray = (JSONArray) dataSetObject.get("data");
 
-            closePriceService.suggestStartDate(startDate, dataArray);
+            suggestStartDate(ticker, startDate, dataArray);
 
             // TODO Extract Price from dataArray and cache it.
 
@@ -114,6 +117,34 @@ public class DmaService {
 
             return twoHundredDayMovingAverage;
         }
+    }
+
+    public void suggestStartDate(String ticker, String startDate, JSONArray dataArray) throws Exception {
+        if (dataArray.isEmpty()) {
+            String suggestedStartDate = getSuggestedStartDate(ticker, startDate);
+            if (!"".equals(suggestedStartDate)) {
+                throw new NotFoundException(String.format(SUGGESTED_START_DATE_MESSAGE, suggestedStartDate));
+            }
+            throw new NotFoundException(NO_DATA_FOR_ANY_DATE);
+        }
+    }
+
+    public String getSuggestedStartDate(String ticker, String startDate) throws Exception {
+        String requestUri = String.format(GET_FIRST_POSSIBLE_START_DATE_URI_PATTERN, ticker, startDate);
+        Request request = new Request.Builder().url(requestUri).build();
+
+        try (Response response = client.newCall(request).execute()) {
+            String responseStr = response.body().string();
+            JSONObject responseObj = new JSONObject(responseStr);
+
+            JSONObject dataSetObject = (JSONObject) responseObj.get("dataset_data");
+            JSONArray dataArray = (JSONArray) dataSetObject.get("data");
+
+            if (!dataArray.isEmpty()) {
+                return dataArray.getJSONArray(0).getString(0);
+            }
+        }
+        return "";
     }
 
     public double getAverage(JSONArray dataArray) {
