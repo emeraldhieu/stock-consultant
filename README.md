@@ -178,11 +178,21 @@ The tables below show several common exceptions, their status code and error cod
 
 ##### Example
 
-(To be updated)
+```sh
+curl -X GET \
+"http://<host>/.rest/api/v2/WATERSTONES/closePrice?startDate=2014-01-01&endDate=2014-07-20"
+```
 
 ##### Response
 
-(To be updated)
+```json
+{
+  "error": {
+    "code": "notFound",
+    "message": "Invalid ticker symbol"
+  }
+}
+```
 
 ##### Unknown exceptions
 
