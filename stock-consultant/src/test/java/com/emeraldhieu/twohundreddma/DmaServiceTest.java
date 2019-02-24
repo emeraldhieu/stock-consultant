@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.emeraldhieu.AbstractServiceTest;
-import com.emeraldhieu.cache.CacheService;
-import com.emeraldhieu.closeprice.ClosePriceService;
 import com.emeraldhieu.errorhandler.ErrorHandlingService;
 
 import okhttp3.OkHttpClient;
@@ -19,22 +17,15 @@ import okhttp3.OkHttpClient;
 public class DmaServiceTest extends AbstractServiceTest {
 
     private DmaService dmaService;
-    private CacheService cacheService;
     private ErrorHandlingService errorHandlingService;
-    private ClosePriceService closePriceService;
     private String ticker = "FB";
 
     @Before
     public void setUp() {
         dmaService = new DmaService();
-        cacheService = new DummyCacheService();
-        dmaService.setCacheService(cacheService);
 
         errorHandlingService = new ErrorHandlingService();
         dmaService.setErrorHandlingService(errorHandlingService);
-
-        closePriceService = new ClosePriceService();
-        dmaService.setClosePriceService(closePriceService);
     }
 
     @Test

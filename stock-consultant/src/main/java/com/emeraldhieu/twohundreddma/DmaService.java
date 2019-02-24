@@ -1,7 +1,5 @@
 package com.emeraldhieu.twohundreddma;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -22,9 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.emeraldhieu.Config;
-import com.emeraldhieu.cache.CacheService;
-import com.emeraldhieu.closeprice.ClosePrice;
-import com.emeraldhieu.closeprice.ClosePriceService;
 import com.emeraldhieu.errorhandler.ErrorHandlingService;
 
 import lombok.extern.apachecommons.CommonsLog;
@@ -50,13 +45,7 @@ public class DmaService {
     private OkHttpClient client = new OkHttpClient();
 
     @Autowired
-    private CacheService cacheService;
-
-    @Autowired
     private ErrorHandlingService errorHandlingService;
-
-    @Autowired
-    private ClosePriceService closePriceService;
 
     @PostConstruct
     public void init() {
@@ -71,25 +60,6 @@ public class DmaService {
                                          @QueryParam("startDate") String startDateParam) throws Exception {
 
         String startDate = Objects.toString(startDateParam, "");
-
-        if (!"".equals(startDate)) {
-            LocalDate startDateObj = LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE);
-            LocalDate endDateObj = startDateObj.plusDays(200);
-
-            // Get price from cache.
-            ClosePrice.Price cachedPrice = cacheService.get(closePriceService
-                    .generateHashCode(ticker, startDate, endDateObj.format(DateTimeFormatter.ISO_LOCAL_DATE)));
-            if (cachedPrice != null) {
-                log.debug("Retrieving cache of close price...");
-                TwoHundredDayMovingAverage.TwoHundredDma twoHundredDma = TwoHundredDayMovingAverage.TwoHundredDma.builder()
-                        .ticker(ticker)
-                        .avg(String.valueOf(getAverage(cachedPrice)))
-                        .build();
-                TwoHundredDayMovingAverage twoHundredDayMovingAverage = TwoHundredDayMovingAverage.builder()
-                        .twoHundredDma(twoHundredDma).build();
-                return  twoHundredDayMovingAverage;
-            }
-        }
 
         String requestUri = String.format(GET_200_DAY_MOVING_AVERAGE_URI_PATTERN, ticker, startDate);
         Request request = new Request.Builder().url(requestUri).build();
@@ -154,14 +124,6 @@ public class DmaService {
                 .average().getAsDouble();
     }
 
-    private double getAverage(ClosePrice.Price price) {
-        return price.getDateClose().stream()
-                .map(dateClose -> dateClose.get(1))
-                .mapToDouble(Double::parseDouble)
-                .average()
-                .getAsDouble();
-    }
-
     /**
      * Used for testing.
      */
@@ -172,21 +134,7 @@ public class DmaService {
     /**
      * Used for testing.
      */
-    void setCacheService(CacheService cacheService) {
-        this.cacheService = cacheService;
-    }
-
-    /**
-     * Used for testing.
-     */
     public void setErrorHandlingService(ErrorHandlingService errorHandlingService) {
         this.errorHandlingService = errorHandlingService;
-    }
-
-    /**
-     * Used for testing.
-     */
-    void setClosePriceService(ClosePriceService closePriceService) {
-        this.closePriceService = closePriceService;
     }
 }
