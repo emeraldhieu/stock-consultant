@@ -10,10 +10,8 @@ import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.springframework.stereotype.Component;
 
-import com.emeraldhieu.closeprice.ClosePrice;
-
 @Component
-public class CacheService {
+public class CacheService<T> {
     /**
      * Store 10000 frequently used elements.
      */
@@ -21,28 +19,27 @@ public class CacheService {
 
     private CacheManager cacheManager;
 
-    /**
-     * Map of hashCode and dateClose. To get a dateClose, pass hashCode.
-     */
-    private Cache<String, ClosePrice.Price> dateCloseCache;
+    public static final String DEFAULT_CACHE_KEY = "default";
+
+    private Cache<String, CachedEntity> cache;
 
     @PostConstruct
     public void init() {
          cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-                .withCache("dateClose",
-                        CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, ClosePrice.Price.class,
+                .withCache(DEFAULT_CACHE_KEY,
+                        CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, CachedEntity.class,
                                 ResourcePoolsBuilder.heap(MAX_ENTRY_COUNT)))
                  .build();
         cacheManager.init();
-        dateCloseCache = cacheManager.getCache("dateClose", String.class, ClosePrice.Price.class);
+        cache = cacheManager.getCache(DEFAULT_CACHE_KEY, String.class, CachedEntity.class);
     }
 
-    public ClosePrice.Price get(String key) {
-        return dateCloseCache.get(key);
+    public CachedEntity<T> get(String key) {
+        return cache.get(key);
     }
 
-    public void put(String key, ClosePrice.Price price) {
-        dateCloseCache.put(key, price);
+    public void put(String key, CachedEntity<T> value) {
+        cache.put(key, value);
     }
 
     @PreDestroy
