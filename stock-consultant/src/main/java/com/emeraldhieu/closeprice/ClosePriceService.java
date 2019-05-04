@@ -56,6 +56,7 @@ public class ClosePriceService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{ticker}/closePrice")
     @ClosePriceValidator
+    @ClosePriceCache
     public Object getClosePrice(@PathParam("ticker") String ticker,
                                 @QueryParam("startDate") String startDateParam,
                                 @QueryParam("endDate") String endDateParam) throws Exception {
