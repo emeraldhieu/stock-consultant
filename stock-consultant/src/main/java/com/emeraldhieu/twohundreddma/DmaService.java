@@ -56,6 +56,7 @@ public class DmaService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{ticker}/200dma")
     @DmaValidator
+    @DmaCache
     public Object get200DayMovingAverage(@PathParam("ticker") String ticker,
                                          @QueryParam("startDate") String startDateParam) throws Exception {
 
@@ -121,7 +122,8 @@ public class DmaService {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(dataArray.iterator(), Spliterator.ORDERED), false)
                 .map(JSONArray.class::cast)
                 .mapToDouble(closePrice -> closePrice.getDouble(1))
-                .average().getAsDouble();
+                .average()
+                .getAsDouble();
     }
 
     /**
