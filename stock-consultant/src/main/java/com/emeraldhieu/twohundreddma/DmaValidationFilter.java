@@ -3,6 +3,7 @@ package com.emeraldhieu.twohundreddma;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import javax.annotation.Priority;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -18,6 +19,7 @@ import lombok.extern.apachecommons.CommonsLog;
 @Component
 @Provider
 @CommonsLog
+@Priority(1000)
 public class DmaValidationFilter implements ContainerRequestFilter {
 
     @Context

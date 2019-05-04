@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.emeraldhieu.Config;
-import com.emeraldhieu.cache.CacheService;
 import com.emeraldhieu.errorhandler.ErrorHandlingService;
 import com.emeraldhieu.twohundreddma.DmaService;
 import com.emeraldhieu.twohundreddma.DmaValidator;
@@ -42,9 +41,6 @@ public class MultiDmaService {
     private static final String NO_DATA_FOR_ANY_DATE = "There is no data for any date.";
 
     private OkHttpClient client = new OkHttpClient();
-
-    @Autowired
-    private CacheService cacheService;
 
     @Autowired
     private ErrorHandlingService errorHandlingService;
@@ -150,13 +146,6 @@ public class MultiDmaService {
                 .build();
 
         return multiDma;
-    }
-
-    /**
-     * Used for testing.
-     */
-    void setCacheService(CacheService cacheService) {
-        this.cacheService = cacheService;
     }
 
     /**

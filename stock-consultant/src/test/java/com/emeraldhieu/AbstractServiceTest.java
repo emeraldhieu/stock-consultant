@@ -1,13 +1,12 @@
 package com.emeraldhieu;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 
 import com.emeraldhieu.cache.CacheService;
-import com.emeraldhieu.closeprice.ClosePrice;
+import com.emeraldhieu.cache.CachedEntity;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -38,12 +37,12 @@ public abstract class AbstractServiceTest {
 
     public class DummyCacheService extends CacheService {
         @Override
-        public ClosePrice.Price get(String key) {
+        public CachedEntity get(String key) {
             return null;
         }
 
         @Override
-        public void put(String key, ClosePrice.Price price) {
+        public void put(String key, CachedEntity value) {
             // Do nothing.
         }
     }

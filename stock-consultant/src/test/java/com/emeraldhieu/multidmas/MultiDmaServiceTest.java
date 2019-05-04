@@ -19,7 +19,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.emeraldhieu.AbstractServiceTest;
-import com.emeraldhieu.cache.CacheService;
 import com.emeraldhieu.errorhandler.ErrorHandlingService;
 import com.emeraldhieu.twohundreddma.DmaService;
 
@@ -33,16 +32,12 @@ import okhttp3.ResponseBody;
 
 public class MultiDmaServiceTest extends AbstractServiceTest {
     private DmaService dmaService;
-    private CacheService cacheService;
     private ErrorHandlingService errorHandlingService;
     private MultiDmaService multiDmaService;
 
     @Before
     public void setUp() {
         multiDmaService = new MultiDmaService();
-
-        cacheService = new DummyCacheService();
-        multiDmaService.setCacheService(cacheService);
 
         errorHandlingService = new ErrorHandlingService();
         multiDmaService.setErrorHandlingService(errorHandlingService);

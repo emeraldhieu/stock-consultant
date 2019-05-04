@@ -1,6 +1,5 @@
 package com.emeraldhieu.closeprice;
 
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,9 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.emeraldhieu.Config;
-import com.emeraldhieu.cache.CacheService;
 import com.emeraldhieu.errorhandler.ErrorHandlingService;
-import com.google.common.hash.Hashing;
 
 import lombok.extern.apachecommons.CommonsLog;
 import okhttp3.OkHttpClient;
@@ -40,9 +37,6 @@ public class ClosePriceService {
             Config.QUANDL_API_ENDPOINT + "%s/data.json?order=asc&column_index=4&start_date=%s&end_date=%s&api_key=" + Config.API_KEY;
 
     private OkHttpClient client = new OkHttpClient();
-
-    @Autowired
-    private CacheService cacheService;
 
     @Autowired
     private ErrorHandlingService errorHandlingService;
@@ -62,24 +56,13 @@ public class ClosePriceService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{ticker}/closePrice")
     @ClosePriceValidator
+    @ClosePriceCache
     public Object getClosePrice(@PathParam("ticker") String ticker,
                                 @QueryParam("startDate") String startDateParam,
                                 @QueryParam("endDate") String endDateParam) throws Exception {
 
         String startDate = Objects.toString(startDateParam, "");
         String endDate = Objects.toString(endDateParam, "");
-
-        // Get price from cache.
-        ClosePrice.Price cachedPrice = cacheService.get(generateHashCode(ticker, startDate, endDate));
-
-        // Return cached close price built from price.
-        if (cachedPrice != null) {
-            log.debug("Retrieving cache of close price...");
-            ClosePrice closePrice = ClosePrice.builder()
-                    .prices(Collections.singletonList(cachedPrice))
-                    .build();
-            return closePrice;
-        }
 
         String requestUri = String.format(GET_CLOSE_PRICE_URI_PATTERN, ticker, startDate, endDate);
         Request request = new Request.Builder().url(requestUri).build();
@@ -105,10 +88,6 @@ public class ClosePriceService {
                     .dateClose(dateCloseList)
                     .build();
 
-            // Cache the price!
-            log.debug("Caching close price...");
-            cacheService.put(generateHashCode(ticker, startDate, endDate), price);
-
             ClosePrice closePrice = ClosePrice.builder()
                     .prices(Collections.singletonList(price))
                     .build();
@@ -117,26 +96,11 @@ public class ClosePriceService {
         }
     }
 
-    public String generateHashCode(String ticker, String startDate, String endDate) {
-        String hashCode = Hashing.sha256()
-                .hashString(ticker + startDate + endDate,
-                        Charset.defaultCharset())
-                .toString();
-        return hashCode;
-    }
-
     /**
      * Used for testing.
      */
     void setClient(OkHttpClient client) {
         this.client = client;
-    }
-
-    /**
-     * Used for testing.
-     */
-    void setCacheService(CacheService cacheService) {
-        this.cacheService = cacheService;
     }
 
     /**
